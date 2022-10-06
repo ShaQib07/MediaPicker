@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.camera.CameraActivity">
+
+    <ImageButton
+        android:id="@+id/ibBack"
+        android:layout_width="56dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/left_bg"
+        android:elevation="4dp"
+        android:layout_marginVertical="12dp"
+        android:src="@drawable/ic_back"
+        android:foreground="?android:attr/selectableItemBackground"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:contentDescription="@string/add_image"
+        tools:ignore="UnusedAttribute" />
+
+    <ImageButton
+        android:id="@+id/ibGallery"
+        android:layout_width="56dp"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@drawable/right_bg"
+        android:contentDescription="@string/app_name"
+        android:elevation="4dp"
+        android:layout_marginVertical="12dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:src="@drawable/ic_gallery"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <TextView
+        android:id="@+id/tvCounter"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:textSize="14sp"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:elevation="8dp"
+        android:background="@drawable/ic_capture"
+        android:visibility="invisible"
+        app:layout_constraintTop_toTopOf="@id/ibGallery"
+        app:layout_constraintEnd_toEndOf="@id/ibGallery"
+        tools:text="5"
+        tools:visibility="visible"/>
+
+    <SeekBar
+        android:id="@+id/seekBarZoom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginVertical="8dp"
+        android:elevation="8dp"
+        android:max="100"
+        android:maxHeight="8dp"
+        android:minHeight="8dp"
+        android:progressDrawable="@drawable/seek_bar"
+        android:thumb="@drawable/custom_thumb"
+        app:layout_constraintBottom_toTopOf="@+id/rlButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="UnusedAttribute" />
+
+    <androidx.camera.view.PreviewView
+        android:id="@+id/viewFinder"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/rlButtons"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
+
+    <RelativeLayout
+        android:id="@+id/rlButtons"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/switchCameraIv"
+            android:layout_width="44dp"
+            android:layout_height="28dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/left_bg"
+            android:contentDescription="@string/app_name"
+            android:elevation="8dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/ic_switch_camera"
+            tools:ignore="UnusedAttribute" />
+
+        <ImageView
+            android:id="@+id/fabCapture"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_centerInParent="true"
+            android:contentDescription="@string/app_name"
+            android:src="@drawable/ic_capture" />
+
+        <ImageView
+            android:id="@+id/flashIv"
+            android:layout_width="44dp"
+            android:layout_height="28dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/right_bg"
+            android:contentDescription="@string/app_name"
+            android:elevation="8dp"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingVertical="2dp"
+            android:src="@drawable/ic_flash_off_blue"
+            tools:ignore="UnusedAttribute" />
+
+    </RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
