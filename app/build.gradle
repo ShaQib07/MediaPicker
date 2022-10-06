@@ -3,7 +3,6 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
     id 'kotlin-parcelize'
-    id 'maven-publish'
 }
 
 android {
@@ -78,16 +77,4 @@ dependencies {
     implementation "androidx.camera:camera-lifecycle:$camera_stable"
     implementation "androidx.camera:camera-view:$camera_alpha"
     implementation "androidx.camera:camera-extensions:$camera_alpha"
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            from components.release
-
-            groupId = 'com.github.shakib'
-            artifactId = 'media-picker'
-            version = '0.1'
-        }
-    }
 }
