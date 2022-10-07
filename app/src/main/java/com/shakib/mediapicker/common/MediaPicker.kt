@@ -22,8 +22,6 @@ class MediaPicker(private val activity: AppCompatActivity) {
         AppContainer(activity.applicationContext)
     }
 
-    enum class Picker { CAMERA, GALLERY }
-
     private var _pickedImages: MutableStateFlow<List<Image>> = MutableStateFlow(listOf())
     val pickedImages: StateFlow<List<Image>> = _pickedImages
 
