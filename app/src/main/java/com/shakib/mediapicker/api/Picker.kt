@@ -1,4 +1,4 @@
-package com.shakib.mediapicker.common
+package com.shakib.mediapicker.api
 
 enum class Picker {
     CAMERA,

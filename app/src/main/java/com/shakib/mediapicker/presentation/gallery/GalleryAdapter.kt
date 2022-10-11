@@ -11,7 +11,7 @@ import com.shakib.mediapicker.common.extensions.invisible
 import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.visible
 import com.shakib.mediapicker.databinding.ItemImageBinding
-import com.shakib.mediapicker.data.model.Image
+import com.shakib.mediapicker.api.Image
 
 class GalleryAdapter(
     private val selectedImages: ArrayList<Image>,

@@ -23,7 +23,7 @@ import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION_KEY
 import com.shakib.mediapicker.common.utils.Constants.RESULT_CODE_CAMERA
 import com.shakib.mediapicker.common.utils.Constants.RESULT_KEY
 import com.shakib.mediapicker.common.utils.Constants.TAG
-import com.shakib.mediapicker.data.model.Image
+import com.shakib.mediapicker.api.Image
 import com.shakib.mediapicker.databinding.ActivityCameraBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
 import java.io.File

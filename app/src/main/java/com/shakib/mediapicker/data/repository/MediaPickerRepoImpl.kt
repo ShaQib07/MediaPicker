@@ -3,7 +3,7 @@ package com.shakib.mediapicker.data.repository
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
-import com.shakib.mediapicker.data.model.Image
+import com.shakib.mediapicker.api.Image
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

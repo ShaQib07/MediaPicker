@@ -88,7 +88,7 @@ afterEvaluate {
 
                 groupId = 'com.github.ShaQib07'
                 artifactId = 'MediaPicker'
-                version = '0.6'
+                version = '0.7'
             }
         }
     }

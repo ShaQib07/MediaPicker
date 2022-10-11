@@ -1,22 +1,21 @@
-package com.shakib.mediapicker.common
+package com.shakib.mediapicker.api
 
 import android.content.Intent
 import android.util.Log
+import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import com.shakib.mediapicker.common.di.AppContainer
 import com.shakib.mediapicker.common.extensions.parcelableArrayList
 import com.shakib.mediapicker.common.utils.Constants
 import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION
 import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION_KEY
-import com.shakib.mediapicker.data.model.Image
 import com.shakib.mediapicker.presentation.camera.CameraActivity
 import com.shakib.mediapicker.presentation.gallery.GalleryActivity
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-class MediaPicker(private val activity: AppCompatActivity) {
+class MediaPicker(private val activity: ComponentActivity) {
 
     init {
         AppContainer(activity.applicationContext)
