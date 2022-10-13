@@ -4,7 +4,8 @@
     <string name="use_camera">Use Camera</string>
     <string name="pick_from_gallery">Pick From Gallery</string>
     <string name="max_selection">Max selection reached</string>
-    <string name="capture_hint">Press and hold the shutter button to finish capturing</string>
     <string name="permission_denied">Permission Denied!</string>
     <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="complete_action_using">Complete action using</string>
 </resources>

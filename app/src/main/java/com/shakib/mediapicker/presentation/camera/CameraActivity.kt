@@ -15,6 +15,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.shakib.mediapicker.R
+import com.shakib.mediapicker.api.Image
 import com.shakib.mediapicker.common.base.BaseActivity
 import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.visible
@@ -23,7 +24,6 @@ import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION_KEY
 import com.shakib.mediapicker.common.utils.Constants.RESULT_CODE_CAMERA
 import com.shakib.mediapicker.common.utils.Constants.RESULT_KEY
 import com.shakib.mediapicker.common.utils.Constants.TAG
-import com.shakib.mediapicker.api.Image
 import com.shakib.mediapicker.databinding.ActivityCameraBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
 import java.io.File
@@ -56,6 +56,16 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
         checkForPermission()
         intent.extras?.getInt(MAX_SELECTION_KEY)?.let { maxSelection = it }
         binding.ibBack.setOnClickListener { finish() }
+        binding.ibDone.setOnClickListener {
+            setResult(
+                RESULT_CODE_CAMERA,
+                Intent().putParcelableArrayListExtra(
+                    RESULT_KEY,
+                    clickedImages as ArrayList<out Parcelable>
+                )
+            )
+            finish()
+        }
         binding.fabCapture.apply {
             setOnClickListener {
                 if (clickedImages.size >= maxSelection)
@@ -64,14 +74,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
                     takePhoto()
             }
             setOnLongClickListener {
-                setResult(
-                    RESULT_CODE_CAMERA,
-                    Intent().putParcelableArrayListExtra(
-                        RESULT_KEY,
-                        clickedImages as ArrayList<out Parcelable>
-                    )
-                )
-                finish()
+
                 true
             }
         }
@@ -215,7 +218,6 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
                     mediaPlayer?.start()
-                    showLongToast(getString(R.string.capture_hint))
                     clickedImages.add(
                         Image(
                             photoFile.toUri(),

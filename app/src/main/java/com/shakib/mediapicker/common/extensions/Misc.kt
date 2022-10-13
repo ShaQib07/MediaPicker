@@ -1,7 +1,6 @@
 package com.shakib.mediapicker.common.extensions
 
 import android.content.Context
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
@@ -18,7 +17,8 @@ import kotlinx.coroutines.launch
 fun Context.showShortToast(message: String) =
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-fun Context.showLongToast(message: String) = Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+fun Context.showLongToast(message: String) =
+    Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 
 fun View.visible() {
     this.visibility = View.VISIBLE
@@ -26,10 +26,6 @@ fun View.visible() {
 
 fun View.invisible() {
     this.visibility = View.INVISIBLE
-}
-
-fun View.gone() {
-    this.visibility = View.GONE
 }
 
 fun <T> AppCompatActivity.collectFlow(flow: Flow<T>, collect: suspend (T) -> Unit) {
@@ -45,22 +41,7 @@ fun <T> AppCompatActivity.collectFlow(flow: Flow<T>, collect: suspend (T) -> Uni
     }
 }
 
-inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
-    Build.VERSION.SDK_INT >= 33 -> getParcelable(key, T::class.java)
-    else -> @Suppress("DEPRECATION") getParcelable(key) as? T
-}
-
 inline fun <reified T : Parcelable> Bundle.parcelableArrayList(key: String): ArrayList<T>? = when {
     Build.VERSION.SDK_INT >= 33 -> getParcelableArrayList(key, T::class.java)
     else -> @Suppress("DEPRECATION") getParcelableArrayList(key)
-}
-
-inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
-    Build.VERSION.SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
-    else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
-}
-
-inline fun <reified T : Parcelable> Intent.parcelableArrayList(key: String): ArrayList<T>? = when {
-    Build.VERSION.SDK_INT >= 33 -> getParcelableArrayListExtra(key, T::class.java)
-    else -> @Suppress("DEPRECATION") getParcelableArrayListExtra(key)
 }
