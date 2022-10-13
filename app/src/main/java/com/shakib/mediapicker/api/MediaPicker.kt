@@ -18,11 +18,10 @@ import kotlinx.coroutines.flow.StateFlow
 
 /**
  * MediaPicker.
- *
  * A class which can be used to pick media files from gallery/camera.
  *
- * @property activity must be an instance of ComponentActivity.
- * @constructor Pass an instance of ComponentActivity to create a MediaPicker instance.
+ * @property activity must be an instance of FragmentActivity.
+ * @constructor Pass an instance of FragmentActivity to create a MediaPicker instance.
  */
 class MediaPicker(private val activity: FragmentActivity) {
 
@@ -62,7 +61,7 @@ class MediaPicker(private val activity: FragmentActivity) {
     }
 
     /**
-     * Use this function to pick image from gallery/camera or open a chooser dialog.
+     * Use this function to pick media files from gallery/camera or open a chooser dialog.
      * Pass Picker.CHOOSER to open a chooser dialog.
      *
      * @param picker pass one of the three enums. Picker.CHOOSER, Picker.CAMERA or Picker.GALLERY.

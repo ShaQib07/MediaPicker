@@ -66,17 +66,11 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
             )
             finish()
         }
-        binding.fabCapture.apply {
-            setOnClickListener {
-                if (clickedImages.size >= maxSelection)
-                    context.showLongToast(getString(R.string.max_selection))
-                else
-                    takePhoto()
-            }
-            setOnLongClickListener {
-
-                true
-            }
+        binding.fabCapture.setOnClickListener {
+            if (clickedImages.size >= maxSelection)
+                showLongToast(getString(R.string.max_selection))
+            else
+                takePhoto()
         }
         binding.switchCameraIv.setOnClickListener {
             preferredCamera = if (preferredCamera == CameraSelector.DEFAULT_BACK_CAMERA)
