@@ -12,6 +12,8 @@ import android.widget.SeekBar
 import androidx.activity.viewModels
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.video.*
+import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.shakib.mediapicker.R
@@ -37,7 +39,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
     private val clickedImages: ArrayList<Image> = ArrayList()
 
     private var imageCapture: ImageCapture? = null
-    private var videoCapture: VideoCapture? = null
+    private var videoCapture: VideoCapture<Recorder>? = null
     private var mediaPlayer: MediaPlayer? = null
     private var cameraExecutor: ExecutorService? = null
     private var preferredCamera = CameraSelector.DEFAULT_BACK_CAMERA
@@ -166,12 +168,15 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
             // Bind use cases to camera
             if (isVideo) {
                 // The Configuration of how we want to capture the video
-                videoCapture = VideoCapture.Builder().apply {
-                    setTargetAspectRatio(AspectRatio.RATIO_16_9)
-                    setCameraSelector(preferredCamera)
-                    setVideoFrameRate(30)
-                    setTargetRotation(binding.viewFinder.display.rotation)
-                }.build()
+                val qualitySelector = QualitySelector.fromOrderedList(
+                    listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
+                    FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
+                val recorder = cameraExecutor?.let {
+                    Recorder.Builder()
+                        .setExecutor(it).setQualitySelector(qualitySelector)
+                        .build()
+                }
+                recorder?.let { videoCapture = VideoCapture.withOutput(it) }
 
                 cameraProvider.bindToLifecycle(this, preferredCamera, videoCapture, preview)
                     .also { cameraControl = it.cameraControl }
