@@ -1,4 +1,4 @@
-package com.shakib.mediapicker.data.model
+package com.shakib.mediapicker.api
 
 import android.net.Uri
 import android.os.Parcelable

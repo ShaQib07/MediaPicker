@@ -15,7 +15,7 @@ import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.showShortToast
 import com.shakib.mediapicker.common.utils.Constants
 import com.shakib.mediapicker.common.utils.Constants.TAG
-import com.shakib.mediapicker.data.model.Image
+import com.shakib.mediapicker.api.Image
 import com.shakib.mediapicker.data.model.Resource
 import com.shakib.mediapicker.databinding.ActivityGalleryBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
