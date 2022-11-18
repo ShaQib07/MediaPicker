@@ -22,6 +22,18 @@
             android:scaleType="centerCrop"
             android:contentDescription="@null" />
 
+        <ImageView
+            android:id="@+id/ivPlay"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_play"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:contentDescription="@null" />
+
         <TextView
             android:id="@+id/tvName"
             android:layout_width="match_parent"

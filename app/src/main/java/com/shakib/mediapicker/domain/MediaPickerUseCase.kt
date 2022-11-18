@@ -6,4 +6,5 @@ import com.shakib.mediapicker.data.repository.MediaPickerRepo
 class MediaPickerUseCase(private val mediaPickerRepo: MediaPickerRepo) {
 
     suspend fun fetchAllImages() = processUseCase(mediaPickerRepo.fetchAllImages())
+    suspend fun fetchAllVideos() = processUseCase(mediaPickerRepo.fetchAllVideos())
 }

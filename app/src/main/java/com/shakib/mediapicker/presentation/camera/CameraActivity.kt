@@ -17,15 +17,17 @@ import androidx.camera.video.VideoCapture
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import com.shakib.mediapicker.R
-import com.shakib.mediapicker.api.Image
+import com.shakib.mediapicker.api.Media
+import com.shakib.mediapicker.api.Type
 import com.shakib.mediapicker.common.base.BaseActivity
 import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.visible
+import com.shakib.mediapicker.common.utils.Constants
 import com.shakib.mediapicker.common.utils.Constants.IMAGE_EXTENSION
-import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION_KEY
 import com.shakib.mediapicker.common.utils.Constants.RESULT_CODE_CAMERA
 import com.shakib.mediapicker.common.utils.Constants.RESULT_KEY
 import com.shakib.mediapicker.common.utils.Constants.TAG
+import com.shakib.mediapicker.common.utils.Constants.VIDEO_EXTENSION
 import com.shakib.mediapicker.databinding.ActivityCameraBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
 import java.io.File
@@ -36,15 +38,19 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
 
     private val viewModel: CameraViewModel by viewModels()
     private var maxSelection = 1
-    private val clickedImages: ArrayList<Image> = ArrayList()
+    private var fileType = Type.IMAGE.name
+    private val clickedMedia: ArrayList<Media> = ArrayList()
 
-    private var imageCapture: ImageCapture? = null
-    private var videoCapture: VideoCapture<Recorder>? = null
-    private var mediaPlayer: MediaPlayer? = null
-    private var cameraExecutor: ExecutorService? = null
+    private lateinit var imageCapture: ImageCapture
+    private lateinit var videoCapture: VideoCapture<Recorder>
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var mediaPlayer: MediaPlayer
+    private lateinit var videoFile: File
+    private lateinit var recording: Recording
     private var preferredCamera = CameraSelector.DEFAULT_BACK_CAMERA
     private var preferredFlashMode = ImageCapture.FLASH_MODE_OFF
     private var isVideo = false
+    private var isRecordingOn = false
 
     private lateinit var rxPermissions: RxPermissions
     private lateinit var cameraProvider: ProcessCameraProvider
@@ -55,24 +61,43 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
 
     override fun configureViews(savedInstanceState: Bundle?) {
         super.configureViews(savedInstanceState)
-        checkForPermission()
-        intent.extras?.getInt(MAX_SELECTION_KEY)?.let { maxSelection = it }
+        intent.extras?.apply {
+            maxSelection = getInt(Constants.MAX_SELECTION_KEY)
+            fileType = getString(Constants.FILE_TYPE_KEY).toString()
+        }
+        when (fileType) {
+            Type.IMAGE.name -> isVideo = false
+            Type.VIDEO.name -> isVideo = true
+            Type.MEDIA.name -> binding.tbVideo.visible()
+        }
+        binding.fabCapture.setOnClickListener {
+            if (clickedMedia.size >= maxSelection)      // Checking for max selection
+                showLongToast(getString(R.string.max_selection))
+            else {
+                if (isVideo) {
+                    if (isRecordingOn)                  // Checking video condition
+                        stopRecording()
+                    else
+                        startRecording()
+                } else
+                    takePhoto()                         // Else, capture photo
+            }
+        }
+        binding.tbVideo.setOnCheckedChangeListener { _, isChecked ->
+            Log.d(TAG, "configureViews: isVideo - $isChecked")
+            isVideo = isChecked
+            updatePreview()
+        }
         binding.ibBack.setOnClickListener { finish() }
         binding.ibDone.setOnClickListener {
             setResult(
                 RESULT_CODE_CAMERA,
                 Intent().putParcelableArrayListExtra(
                     RESULT_KEY,
-                    clickedImages as ArrayList<out Parcelable>
+                    clickedMedia as ArrayList<out Parcelable>
                 )
             )
             finish()
-        }
-        binding.fabCapture.setOnClickListener {
-            if (clickedImages.size >= maxSelection)
-                showLongToast(getString(R.string.max_selection))
-            else
-                takePhoto()
         }
         binding.switchCameraIv.setOnClickListener {
             preferredCamera = if (preferredCamera == CameraSelector.DEFAULT_BACK_CAMERA)
@@ -80,7 +105,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
             else
                 CameraSelector.DEFAULT_BACK_CAMERA
 
-            updatePreview(preferredCamera, preferredFlashMode, isVideo)
+            updatePreview()
         }
         binding.flashIv.setOnClickListener {
             preferredFlashMode = if (preferredFlashMode == ImageCapture.FLASH_MODE_OFF) {
@@ -91,7 +116,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
                 ImageCapture.FLASH_MODE_OFF
             }
 
-            updatePreview(preferredCamera, preferredFlashMode, isVideo)
+            updatePreview()
         }
         binding.seekBarZoom.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(
@@ -105,6 +130,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
             override fun onStartTrackingTouch(seekBar: SeekBar) {}
             override fun onStopTrackingTouch(seekBar: SeekBar) {}
         })
+        checkForPermission()
     }
 
     private fun checkForPermission() {
@@ -150,55 +176,47 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
                     it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
-            updatePreview(preferredCamera, preferredFlashMode, isVideo)
+            updatePreview()
 
         }, ContextCompat.getMainExecutor(this))
     }
 
-    @SuppressLint("RestrictedApi")
-    private fun updatePreview(
-        preferredCamera: CameraSelector,
-        preferredFlashMode: Int,
-        isVideo: Boolean
-    ) {
+    private fun updatePreview() {
         try {
             // Unbind use cases before rebinding
             cameraProvider.unbindAll()
-
-            // Bind use cases to camera
-            if (isVideo) {
-                // The Configuration of how we want to capture the video
-                val qualitySelector = QualitySelector.fromOrderedList(
-                    listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
-                    FallbackStrategy.lowerQualityOrHigherThan(Quality.SD))
-                val recorder = cameraExecutor?.let {
-                    Recorder.Builder()
-                        .setExecutor(it).setQualitySelector(qualitySelector)
-                        .build()
-                }
-                recorder?.let { videoCapture = VideoCapture.withOutput(it) }
-
-                cameraProvider.bindToLifecycle(this, preferredCamera, videoCapture, preview)
-                    .also { cameraControl = it.cameraControl }
-            } else {
-                imageCapture = ImageCapture.Builder()
-                    .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
-                    .setTargetRotation(binding.root.display.rotation)
-                    .setFlashMode(preferredFlashMode)
-                    .build()
-
-                cameraProvider.bindToLifecycle(this, preferredCamera, imageCapture, preview)
-                    .also { cameraControl = it.cameraControl }
-            }
+            cameraProvider
+                .bindToLifecycle(this, preferredCamera, setupCapturerUseCase(), preview)
+                .also { cameraControl = it.cameraControl }
         } catch (exc: Exception) {
             Log.d(TAG, "Use case binding failed ${exc.message}")
         }
     }
 
-    private fun takePhoto() {
-        // Get a stable reference of the modifiable image capture use case
-        val imageCapture = imageCapture ?: return
+    private fun setupCapturerUseCase(): UseCase {
+        if (isVideo) {
+            val qualitySelector = QualitySelector.fromOrderedList(
+                listOf(Quality.UHD, Quality.FHD, Quality.HD, Quality.SD),
+                FallbackStrategy.lowerQualityOrHigherThan(Quality.SD)
+            )
 
+            val recorder = Recorder.Builder()
+                .setExecutor(cameraExecutor).setQualitySelector(qualitySelector)
+                .build()
+
+            videoCapture = VideoCapture.withOutput(recorder)
+            return videoCapture
+        } else {
+            imageCapture = ImageCapture.Builder()
+                .setCaptureMode(ImageCapture.CAPTURE_MODE_MAXIMIZE_QUALITY)
+                .setTargetRotation(binding.root.display.rotation)
+                .setFlashMode(preferredFlashMode)
+                .build()
+            return imageCapture
+        }
+    }
+
+    private fun takePhoto() {
         // Create time-stamped output file to hold the image
         val photoFile =
             File(viewModel.outputDirectory, "${System.currentTimeMillis()}$IMAGE_EXTENSION")
@@ -216,23 +234,62 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
                 }
 
                 override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                    mediaPlayer?.start()
-                    clickedImages.add(
-                        Image(
+                    mediaPlayer.start()
+                    clickedMedia.add(
+                        Media(
                             photoFile.toUri(),
                             photoFile.name,
                             photoFile.absolutePath
                         )
                     )
-                    binding.tvCounter.visible()
-                    binding.tvCounter.text = clickedImages.size.toString()
+                    updateCounter()
                 }
             })
     }
 
+    @SuppressLint("MissingPermission")
+    private fun startRecording() {
+        // Get a stable reference of the modifiable video capture use case
+        val videoCapture = videoCapture
+        isRecordingOn = true
+
+        // Create time-stamped output file to hold the video
+        videoFile = File(viewModel.outputDirectory, "${System.currentTimeMillis()}$VIDEO_EXTENSION")
+
+        // Create output options object which contains file + metadata
+        val outputOptions = FileOutputOptions.Builder(videoFile).build()
+
+        Log.d(TAG, "Recording started")
+        // 2. Configure Recorder and Start recording to the mediaStoreOutput.
+
+        recording = videoCapture.output
+            .prepareRecording(this, outputOptions)
+            .withAudioEnabled()
+            .start(cameraExecutor) { }
+    }
+
+    private fun stopRecording() {
+        recording.stop()
+        isRecordingOn = false
+        Log.d(TAG, "Recording stopped - ${videoFile.absolutePath}")
+        clickedMedia.add(
+            Media(
+                videoFile.toUri(),
+                videoFile.name,
+                videoFile.absolutePath
+            )
+        )
+        updateCounter()
+    }
+
+    private fun updateCounter() {
+        binding.tvCounter.visible()
+        binding.tvCounter.text = clickedMedia.size.toString()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        mediaPlayer?.release()
-        cameraExecutor?.shutdown()
+        mediaPlayer.release()
+        cameraExecutor.shutdown()
     }
 }

@@ -11,14 +11,15 @@ import com.shakib.mediapicker.common.extensions.invisible
 import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.visible
 import com.shakib.mediapicker.databinding.ItemImageBinding
-import com.shakib.mediapicker.api.Image
+import com.shakib.mediapicker.api.Media
+import com.shakib.mediapicker.common.utils.Constants.VIDEO_EXTENSION
 
 class GalleryAdapter(
-    private val selectedImages: ArrayList<Image>,
+    private val selectedMedia: ArrayList<Media>,
     private val maxSelection: Int
 ) : RecyclerView.Adapter<GalleryAdapter.ImageViewHolder>() {
 
-    private val imageList: ArrayList<Image> = ArrayList()
+    private val mediaList: ArrayList<Media> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ImageViewHolder(
         ItemImageBinding.inflate(
@@ -29,7 +30,7 @@ class GalleryAdapter(
     )
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-        val currentImage = imageList[position]
+        val currentImage = mediaList[position]
         holder.binding.apply {
             ivSelect.invisible()
             ivImage.apply {
@@ -38,27 +39,33 @@ class GalleryAdapter(
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(this)
             }
-            tvName.text = currentImage.title
+            currentImage.title.apply {
+                tvName.text = this
+                if (this.contains(VIDEO_EXTENSION))
+                    ivPlay.visible()
+                else
+                    ivPlay.invisible()
+            }
             itemView.setOnClickListener {
-                if (selectedImages.contains(currentImage)) {
-                    selectedImages.remove(currentImage)
+                if (selectedMedia.contains(currentImage)) {
+                    selectedMedia.remove(currentImage)
                     ivSelect.invisible()
-                } else if (selectedImages.size >= maxSelection)
+                } else if (selectedMedia.size >= maxSelection)
                     it.context.showLongToast(it.context.getString(R.string.max_selection))
                 else {
-                    selectedImages.add(currentImage)
+                    selectedMedia.add(currentImage)
                     ivSelect.visible()
                 }
             }
         }
     }
 
-    override fun getItemCount() = imageList.size
+    override fun getItemCount() = mediaList.size
 
     @SuppressLint("NotifyDataSetChanged")
-    fun submitList(imageList: List<Image>) {
-        this.imageList.clear()
-        this.imageList.addAll(imageList)
+    fun submitList(mediaList: List<Media>) {
+        this.mediaList.clear()
+        this.mediaList.addAll(mediaList)
         notifyDataSetChanged()
     }
 

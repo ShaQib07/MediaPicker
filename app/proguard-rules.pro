@@ -20,5 +20,6 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keep class com.shakib.mediapicker.api.MediaPicker {*;}
--keep class com.shakib.mediapicker.api.Image {*;}
+-keep class com.shakib.mediapicker.api.Media {*;}
 -keep public enum com.shakib.mediapicker.api.Picker {*;}
+-keep public enum com.shakib.mediapicker.api.Type {*;}
