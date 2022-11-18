@@ -28,23 +28,25 @@ Create a MediaPicker instance.
 ```bash
  val mediaPicker = MediaPicker(this) // where this is an Activity instance
 ```
-Call the `pickImage()` function to start picking images.
+Call the `pickMedia()` function to start picking images.
 ```bash
- mediaPicker.pickImage(picker = Picker.GALLERY, maxSelection = 3)
+ mediaPicker.pickMedia(picker = Picker.CHOOSER, fileType = Type.MEDIA, maxSelection = 3)
 ```
-NOTE: Here, you can pass one of the three enums - `Picker.CHOOSER`, `Picker.CAMERA` or `Picker.GALLERY`.
+NOTE: Here, you can pass one of the three enums - `Picker.CHOOSER`, `Picker.CAMERA` or `Picker.GALLERY` as `picker`.
 `Picker.CHOOSER` will open a dialog to choose from CAMERA or GALLERY.
 Whereas, `Picker.CAMERA` or `Picker.GALLERY` will directly open their corresponding window.
+As for `fileType`, pass `Type.IMAGE` or `Type.VIDEO` for picking image or video files respectively.
+Pass `Type.MEDIA` if you want to pick both image and video files.
 The  `maxSelection` parameter is optional and it's default value is 3. 
 It is an integer value that'll define the possible maximum number of selection.
 
-Use the `pickedImages` StateFlow to observe the picked images from CAMERA or GALLERY.
+Use the `pickedMedia` StateFlow to observe the picked media files from CAMERA or GALLERY.
 Add necessary dependencies to use StateFlow in your app.
 ```bash
  lifecycleScope.launch {
     repeatOnLifecycle(Lifecycle.State.STARTED) { 
-            mediaPicker.pickedImages.collectLatest { list ->
-                // use the list of images as you please
+            mediaPicker.pickedMedia.collectLatest { list ->
+                // use the list of media as you please
             }
         }
     }
@@ -52,10 +54,11 @@ Add necessary dependencies to use StateFlow in your app.
 
 This is how the Image class looks like.
 ```bash
- data class Image(
+ data class Media(
     val uri: Uri, 
     val title: String, 
-    val path: String
+    val path: String,
+    val dateTaken: Date = Date(System.currentTimeMillis())
 )
 ```
 ## Tech Stack
