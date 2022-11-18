@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity
 import com.shakib.mediapicker.common.di.AppContainer
 import com.shakib.mediapicker.common.extensions.parcelableArrayList
 import com.shakib.mediapicker.common.utils.Constants
+import com.shakib.mediapicker.common.utils.Constants.FILE_TYPE_KEY
 import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION
 import com.shakib.mediapicker.common.utils.Constants.MAX_SELECTION_KEY
 import com.shakib.mediapicker.presentation.camera.CameraActivity
@@ -29,13 +30,13 @@ class MediaPicker(private val activity: FragmentActivity) {
         AppContainer(activity.applicationContext)
     }
 
-    private var _pickedImages: MutableStateFlow<List<Image>> = MutableStateFlow(listOf())
+    private var _pickedMedia: MutableStateFlow<List<Media>> = MutableStateFlow(listOf())
 
     /**
      * A state flow to observe the picked media files.
      * Collect this flow to get the picked media files as list.
      */
-    val pickedImages: StateFlow<List<Image>> = _pickedImages
+    val pickedMedia: StateFlow<List<Media>> = _pickedMedia
 
     private var activityResultLauncher =
         activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -46,14 +47,14 @@ class MediaPicker(private val activity: FragmentActivity) {
         result?.let {
             when (it.resultCode) {
                 Constants.RESULT_CODE_CAMERA, Constants.RESULT_CODE_GALLERY -> {
-                    it.data?.extras?.parcelableArrayList<Image>(Constants.RESULT_KEY)
+                    it.data?.extras?.parcelableArrayList<Media>(Constants.RESULT_KEY)
                         ?.let { images ->
-                            _pickedImages.value = images
+                            _pickedMedia.value = images
                             Log.d(Constants.TAG, "parseResult: ${images.size}")
                         }
                 }
                 else -> {
-                    _pickedImages.value = listOf()
+                    _pickedMedia.value = listOf()
                     Log.d(Constants.TAG, "parseResult: came to else block")
                 }
             }
@@ -65,34 +66,34 @@ class MediaPicker(private val activity: FragmentActivity) {
      * Pass Picker.CHOOSER to open a chooser dialog.
      *
      * @param picker pass one of the three enums. Picker.CHOOSER, Picker.CAMERA or Picker.GALLERY.
+     * @param fileType pass one of the three enums. Type.IMAGE, Type.VIDEO or Type.MEDIA.
      * @param maxSelection An integer value that'll define the possible maximum number of selection.
      */
-    fun pickImage(picker: Picker, maxSelection: Int = MAX_SELECTION) {
+    fun pickMedia(picker: Picker, fileType: Type, maxSelection: Int = MAX_SELECTION) {
+        _pickedMedia.value = listOf()
         if (picker == Picker.CHOOSER)
-            showPickerPopUp(maxSelection)
+            showPickerPopUp(fileType, maxSelection)
         else
-            launchPicker(picker, maxSelection)
+            launchPicker(picker, fileType, maxSelection)
     }
 
-    private fun launchPicker(picker: Picker, maxSelection: Int) {
+    private fun launchPicker(picker: Picker, fileType: Type, maxSelection: Int) {
         if (picker == Picker.CAMERA)
             activityResultLauncher.launch(
-                Intent(activity, CameraActivity::class.java).putExtra(
-                    MAX_SELECTION_KEY,
-                    maxSelection
-                )
+                Intent(activity, CameraActivity::class.java)
+                    .putExtra(FILE_TYPE_KEY, fileType.name)
+                    .putExtra(MAX_SELECTION_KEY, maxSelection)
             )
         else if (picker == Picker.GALLERY)
             activityResultLauncher.launch(
-                Intent(activity, GalleryActivity::class.java).putExtra(
-                    MAX_SELECTION_KEY,
-                    maxSelection
-                )
+                Intent(activity, GalleryActivity::class.java)
+                    .putExtra(FILE_TYPE_KEY, fileType.name)
+                    .putExtra(MAX_SELECTION_KEY, maxSelection)
             )
     }
 
-    private fun showPickerPopUp(maxSelection: Int = MAX_SELECTION) {
-        MediaPickerDialog { launchPicker(it, maxSelection) }
+    private fun showPickerPopUp(fileType: Type, maxSelection: Int = MAX_SELECTION) {
+        MediaPickerDialog { launchPicker(it, fileType, maxSelection) }
             .show(activity.supportFragmentManager, MediaPickerDialog.TAG)
     }
 }

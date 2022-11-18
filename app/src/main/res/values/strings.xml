@@ -8,4 +8,6 @@
     <string name="gallery">Gallery</string>
     <string name="camera">Camera</string>
     <string name="complete_action_using">Complete action using</string>
+    <string name="video_on">Video On</string>
+    <string name="video_off">Video Off</string>
 </resources>

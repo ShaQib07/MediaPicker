@@ -15,7 +15,8 @@ import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.showShortToast
 import com.shakib.mediapicker.common.utils.Constants
 import com.shakib.mediapicker.common.utils.Constants.TAG
-import com.shakib.mediapicker.api.Image
+import com.shakib.mediapicker.api.Media
+import com.shakib.mediapicker.api.Type
 import com.shakib.mediapicker.data.model.Resource
 import com.shakib.mediapicker.databinding.ActivityGalleryBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
@@ -24,7 +25,8 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
 
     private val viewModel: GalleryViewModel by viewModels()
     private var maxSelection = 1
-    private val selectedImages: ArrayList<Image> = ArrayList()
+    private var fileType = Type.IMAGE.name
+    private val selectedMedia: ArrayList<Media> = ArrayList()
 
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var rxPermissions: RxPermissions
@@ -33,20 +35,23 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
 
     override fun configureViews(savedInstanceState: Bundle?) {
         super.configureViews(savedInstanceState)
-        checkForPermission()
-        intent.extras?.getInt(Constants.MAX_SELECTION_KEY)?.let { maxSelection = it }
-        configureRecyclerView()
+        intent.extras?.apply {
+            maxSelection = getInt(Constants.MAX_SELECTION_KEY)
+            fileType = getString(Constants.FILE_TYPE_KEY).toString()
+        }
         binding.ibBack.setOnClickListener { finish() }
         binding.ibDone.setOnClickListener {
             setResult(
                 Constants.RESULT_CODE_GALLERY,
                 Intent().putParcelableArrayListExtra(
                     Constants.RESULT_KEY,
-                    selectedImages as ArrayList<out Parcelable>
+                    selectedMedia as ArrayList<out Parcelable>
                 )
             )
             finish()
         }
+        configureRecyclerView()
+        checkForPermission()
     }
 
     private fun checkForPermission() {
@@ -74,18 +79,22 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
     }
 
     private fun bindWithViewModel() {
-        viewModel.fetchAllImages()
-        collectFlow(viewModel.imageListStateFlow) {
+        when (fileType) {
+            Type.IMAGE.name -> viewModel.fetchAllImages()
+            Type.VIDEO.name -> viewModel.fetchAllVideos()
+            Type.MEDIA.name -> viewModel.fetchAllMedias()
+        }
+        collectFlow(viewModel.mediaListStateFlow) {
             when (it) {
                 is Resource.Success -> galleryAdapter.submitList(it.data)
                 is Resource.Error -> showShortToast(it.throwable.message.toString())
-                else -> Log.d(TAG, "show loader if necessary ")
+                else -> Log.d(TAG, "Show loader if necessary ")
             }
         }
     }
 
     private fun configureRecyclerView() {
-        galleryAdapter = GalleryAdapter(selectedImages, maxSelection)
+        galleryAdapter = GalleryAdapter(selectedMedia, maxSelection)
         binding.rvImage.apply {
             layoutManager = GridLayoutManager(context, 3)
             adapter = galleryAdapter
