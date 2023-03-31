@@ -10,14 +10,14 @@
         android:id="@+id/ibBack"
         android:layout_width="56dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/left_bg"
+        android:background="@drawable/mp_left_bg"
         android:elevation="4dp"
         android:layout_marginVertical="12dp"
-        android:src="@drawable/ic_back"
+        android:src="@drawable/mp_ic_back"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/add_image"
+        android:contentDescription="@string/mp_add_image"
         tools:ignore="UnusedAttribute" />
 
     <TextView
@@ -28,12 +28,12 @@
         android:layout_marginVertical="12dp"
         android:textSize="20sp"
         android:textAlignment="center"
-        android:text="@string/gallery"
-        android:textColor="@color/blue"
+        android:text="@string/mp_gallery"
+        android:textColor="@color/mp_blue"
         android:textStyle="bold"
         android:gravity="center"
         android:paddingHorizontal="80dp"
-        android:background="@drawable/right_bg"
+        android:background="@drawable/mp_right_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -51,14 +51,14 @@
         android:id="@+id/ibDone"
         android:layout_width="56dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@drawable/right_bg"
+        android:background="@drawable/mp_right_bg"
         android:elevation="4dp"
         android:layout_marginVertical="36dp"
-        android:src="@drawable/ic_done"
+        android:src="@drawable/mp_ic_done"
         android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:contentDescription="@string/add_image"
+        android:contentDescription="@string/mp_add_image"
         tools:ignore="UnusedAttribute" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

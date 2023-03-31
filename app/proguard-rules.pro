@@ -19,6 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class com.shakib.mediapicker.api.MediaPickerExtensionsKt {*;}
 -keep class com.shakib.mediapicker.api.MediaPicker {*;}
 -keep class com.shakib.mediapicker.api.Media {*;}
 -keep public enum com.shakib.mediapicker.api.Picker {*;}

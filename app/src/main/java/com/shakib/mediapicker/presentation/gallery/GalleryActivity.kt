@@ -1,6 +1,7 @@
 package com.shakib.mediapicker.presentation.gallery
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -18,10 +19,10 @@ import com.shakib.mediapicker.common.utils.Constants.TAG
 import com.shakib.mediapicker.api.Media
 import com.shakib.mediapicker.api.Type
 import com.shakib.mediapicker.data.model.Resource
-import com.shakib.mediapicker.databinding.ActivityGalleryBinding
+import com.shakib.mediapicker.databinding.MpActivityGalleryBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
 
-class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
+class GalleryActivity : BaseActivity<MpActivityGalleryBinding>() {
 
     private val viewModel: GalleryViewModel by viewModels()
     private var maxSelection = 1
@@ -31,7 +32,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
     private lateinit var galleryAdapter: GalleryAdapter
     private lateinit var rxPermissions: RxPermissions
 
-    override fun getViewBinding() = ActivityGalleryBinding.inflate(layoutInflater)
+    override fun getViewBinding() = MpActivityGalleryBinding.inflate(layoutInflater)
 
     override fun configureViews(savedInstanceState: Bundle?) {
         super.configureViews(savedInstanceState)
@@ -54,6 +55,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
         checkForPermission()
     }
 
+    @SuppressLint("CheckResult")
     private fun checkForPermission() {
         rxPermissions = RxPermissions(this)
         val permissions = when {
@@ -72,7 +74,7 @@ class GalleryActivity : BaseActivity<ActivityGalleryBinding>() {
                 if (granted) {
                     bindWithViewModel()
                 } else {
-                    showLongToast(getString(R.string.permission_denied))
+                    showLongToast(getString(R.string.mp_permission_denied))
                     finish()
                 }
             }

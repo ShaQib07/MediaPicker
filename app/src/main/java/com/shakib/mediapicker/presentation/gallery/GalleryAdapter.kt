@@ -10,7 +10,7 @@ import com.shakib.mediapicker.R
 import com.shakib.mediapicker.common.extensions.invisible
 import com.shakib.mediapicker.common.extensions.showLongToast
 import com.shakib.mediapicker.common.extensions.visible
-import com.shakib.mediapicker.databinding.ItemImageBinding
+import com.shakib.mediapicker.databinding.MpItemImageBinding
 import com.shakib.mediapicker.api.Media
 import com.shakib.mediapicker.common.utils.Constants.VIDEO_EXTENSION
 
@@ -22,7 +22,7 @@ class GalleryAdapter(
     private val mediaList: ArrayList<Media> = ArrayList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ImageViewHolder(
-        ItemImageBinding.inflate(
+        MpItemImageBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -51,7 +51,7 @@ class GalleryAdapter(
                     selectedMedia.remove(currentImage)
                     ivSelect.invisible()
                 } else if (selectedMedia.size >= maxSelection)
-                    it.context.showLongToast(it.context.getString(R.string.max_selection))
+                    it.context.showLongToast(it.context.getString(R.string.mp_max_selection))
                 else {
                     selectedMedia.add(currentImage)
                     ivSelect.visible()
@@ -69,6 +69,6 @@ class GalleryAdapter(
         notifyDataSetChanged()
     }
 
-    class ImageViewHolder(val binding: ItemImageBinding) :
+    class ImageViewHolder(val binding: MpItemImageBinding) :
         RecyclerView.ViewHolder(binding.root)
 }

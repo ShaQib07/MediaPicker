@@ -8,7 +8,7 @@ import com.shakib.mediapicker.data.repository.MediaPickerRepoImpl
 import com.shakib.mediapicker.domain.DirectoryUseCase
 import com.shakib.mediapicker.domain.MediaPickerUseCase
 
-class AppContainer(val context: Context) {
+class AppContainer(private val context: Context) {
 
     init {
         directoryUseCase = DirectoryUseCase()
