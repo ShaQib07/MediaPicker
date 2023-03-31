@@ -67,7 +67,7 @@ class MediaPicker(private val activity: FragmentActivity) {
      *
      * @param picker pass one of the three enums. Picker.CHOOSER, Picker.CAMERA or Picker.GALLERY.
      * @param fileType pass one of the three enums. Type.IMAGE, Type.VIDEO or Type.MEDIA.
-     * @param maxSelection An integer value that'll define the possible maximum number of selection.
+     * @param maxSelection Optional - An integer value that'll define the possible maximum number of selection. Default is 3.
      */
     fun pickMedia(picker: Picker, fileType: Type, maxSelection: Int = MAX_SELECTION) {
         _pickedMedia.value = listOf()

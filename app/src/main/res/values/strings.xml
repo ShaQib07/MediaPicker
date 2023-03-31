@@ -1,13 +1,13 @@
 <resources>
-    <string name="app_name">MediaPicker</string>
-    <string name="add_image">Add Image</string>
-    <string name="use_camera">Use Camera</string>
-    <string name="pick_from_gallery">Pick From Gallery</string>
-    <string name="max_selection">Max selection reached</string>
-    <string name="permission_denied">Permission Denied!</string>
-    <string name="gallery">Gallery</string>
-    <string name="camera">Camera</string>
-    <string name="complete_action_using">Complete action using</string>
-    <string name="video_on">Video On</string>
-    <string name="video_off">Video Off</string>
+    <string name="mp_app_name">MediaPicker</string>
+    <string name="mp_add_image">Add Image</string>
+    <string name="mp_use_camera">Use Camera</string>
+    <string name="mp_pick_from_gallery">Pick From Gallery</string>
+    <string name="mp_max_selection">Max selection reached</string>
+    <string name="mp_permission_denied">Permission Denied!</string>
+    <string name="mp_gallery">Gallery</string>
+    <string name="mp_camera">Camera</string>
+    <string name="mp_complete_action_using">Complete action using</string>
+    <string name="mp_video_on">Video On</string>
+    <string name="mp_video_off">Video Off</string>
 </resources>

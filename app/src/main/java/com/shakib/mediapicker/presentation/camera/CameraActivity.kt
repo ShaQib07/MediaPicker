@@ -28,13 +28,13 @@ import com.shakib.mediapicker.common.utils.Constants.RESULT_CODE_CAMERA
 import com.shakib.mediapicker.common.utils.Constants.RESULT_KEY
 import com.shakib.mediapicker.common.utils.Constants.TAG
 import com.shakib.mediapicker.common.utils.Constants.VIDEO_EXTENSION
-import com.shakib.mediapicker.databinding.ActivityCameraBinding
+import com.shakib.mediapicker.databinding.MpActivityCameraBinding
 import com.tbruyelle.rxpermissions3.RxPermissions
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-class CameraActivity : BaseActivity<ActivityCameraBinding>() {
+class CameraActivity : BaseActivity<MpActivityCameraBinding>() {
 
     private val viewModel: CameraViewModel by viewModels()
     private var maxSelection = 1
@@ -57,7 +57,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
     private lateinit var preview: Preview
     private lateinit var cameraControl: CameraControl
 
-    override fun getViewBinding() = ActivityCameraBinding.inflate(layoutInflater)
+    override fun getViewBinding() = MpActivityCameraBinding.inflate(layoutInflater)
 
     override fun configureViews(savedInstanceState: Bundle?) {
         super.configureViews(savedInstanceState)
@@ -72,7 +72,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
         }
         binding.fabCapture.setOnClickListener {
             if (clickedMedia.size >= maxSelection)      // Checking for max selection
-                showLongToast(getString(R.string.max_selection))
+                showLongToast(getString(R.string.mp_max_selection))
             else {
                 if (isVideo) {
                     if (isRecordingOn)                  // Checking video condition
@@ -109,10 +109,10 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
         }
         binding.flashIv.setOnClickListener {
             preferredFlashMode = if (preferredFlashMode == ImageCapture.FLASH_MODE_OFF) {
-                binding.flashIv.setImageResource(R.drawable.ic_flash_blue)
+                binding.flashIv.setImageResource(R.drawable.mp_ic_flash_blue)
                 ImageCapture.FLASH_MODE_ON
             } else {
-                binding.flashIv.setImageResource(R.drawable.ic_flash_off_blue)
+                binding.flashIv.setImageResource(R.drawable.mp_ic_flash_off_blue)
                 ImageCapture.FLASH_MODE_OFF
             }
 
@@ -133,6 +133,7 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
         checkForPermission()
     }
 
+    @SuppressLint("CheckResult")
     private fun checkForPermission() {
         rxPermissions = RxPermissions(this)
         val permissions = when {
@@ -155,14 +156,14 @@ class CameraActivity : BaseActivity<ActivityCameraBinding>() {
                 if (granted) {
                     startCamera()
                 } else {
-                    showLongToast(getString(R.string.permission_denied))
+                    showLongToast(getString(R.string.mp_permission_denied))
                     finish()
                 }
             }
     }
 
     private fun startCamera() {
-        mediaPlayer = MediaPlayer.create(this, R.raw.camera_shutter_click)
+        mediaPlayer = MediaPlayer.create(this, R.raw.mp_camera_shutter_click)
         cameraExecutor = Executors.newSingleThreadExecutor()
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
         cameraProviderFuture.addListener({
