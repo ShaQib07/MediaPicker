@@ -20,7 +20,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.ShaQib07:MediaPicker:latest-release'
+    implementation 'com.github.ShaQib07:MediaPicker:latest_release'
 }
 ```
 ## Usage
@@ -50,6 +50,20 @@ Add necessary dependencies to use StateFlow in your app.
             }
         }
     }
+```
+You may need to import the below dependency in order to use the `repeatOnLifecycle(Lifecycle.State.STARTED)` part.
+```bash
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:latest_release"
+```
+If you'd like to upload the Media files through REST API and want them as MultipartBody.Part then you can the extension function `asMultipart()` like below.
+```bash
+lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mediaPicker.pickedMedia.collectLatest { list ->
+                    val multipartList = list.asMultipart()
+                }
+            }
+        }
 ```
 
 This is how the Image class looks like.
